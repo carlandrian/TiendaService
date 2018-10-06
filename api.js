@@ -10,7 +10,7 @@ var server = http.createServer(function(req, res) {
 	var parsedUrl = URL.parse(req.url, true);
 	console.log(parsedUrl);
 	switch(parsedUrl.pathname) {
-		case 'tienda/register':
+		case '/tienda/register':
 			if(req.method == 'POST') {
 				var body = "";
 				// get the passed data during POST during req 'on data' event
