@@ -25,6 +25,15 @@ var server = http.createServer(function(req, res) {
 					var postJSON = JSON.parse(body);
 					console.log(postJSON);
 					
+					// check if all mandatory fields are passed
+					if(postJSON.user_showname
+						&& postJSON.user_email
+						&& postJSON.user_telecom,
+						&& postJSON.user_password) {
+							
+					} else {
+						res.end("Registration failed!");
+					}
 				});
 			}
 		break;
