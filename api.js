@@ -12,11 +12,13 @@ var server = http.createServer(function(req, res) {
 	switch(parsedUrl.pathname) {
 		case '/tienda/register':
 			if(req.method == 'POST') {
+				console.log('processing register from POST');
 				var body = "";
 				// get the passed data during POST during req 'on data' event
 				req.on('data', function(dataChunk) {
 					body += dataChunk;
 				});
+				console.log('POST body: ' + body);
 				
 				req.on('end', function() {
 					// Once data is completed from POST body turn it into JSON to proceed with saving to DB
