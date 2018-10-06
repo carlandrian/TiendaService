@@ -47,7 +47,7 @@ var server = http.createServer(function(req, res) {
 	var parsedUrl = URL.parse(req.url, true);
 	console.log(parsedUrl);
 	switch(parsedUrl.pathname) {
-		case '/tienda/register' || 'tienda/register/':
+		case '/tienda/register' || '/tienda/register/':
 			if(req.method == 'POST') {
 				console.log('processing register from POST');
 				var body = "";
