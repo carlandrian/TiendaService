@@ -2,7 +2,7 @@
   "name": "tiendaservice",
   "version": "1.0.0",
   "description": "Tienda Mobile Service",
-  "main": "index.js",
+  "main": "api.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
