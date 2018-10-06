@@ -10,7 +10,7 @@ var assert = require('assert');
 * @param callback - callback to execute when connection finishes.
 */
 var connect = function(databaseName, callback) {
-
+  console.log(databaseName);
   // URL to MongoDB instance we are connecting to
   var url = 'mongodb://localhost:27017/' + databaseName;
 
