@@ -1,0 +1,25 @@
+{
+  "name": "tiendaservice",
+  "version": "1.0.0",
+  "description": "Tienda Mobile Service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlandrian/TiendaService.git"
+  },
+  "keywords": [
+    "tienda"
+  ],
+  "author": "Carl A. A. C.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/carlandrian/TiendaService/issues"
+  },
+  "homepage": "https://github.com/carlandrian/TiendaService#readme",
+  "dependencies": {
+    "mongodb": "^3.1.6"
+  }
+}
