@@ -28,7 +28,7 @@ var server = http.createServer(function(req, res) {
 					// check if all mandatory fields are passed
 					if(postJSON.user_showname
 						&& postJSON.user_email
-						&& postJSON.user_telecom,
+						&& postJSON.user_telecom
 						&& postJSON.user_password) {
 							
 					} else {
