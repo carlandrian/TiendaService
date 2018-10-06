@@ -3,6 +3,20 @@ var fs = require('fs');
 var http = require('http');
 var URL = require('url');
 
+var insertResource = function(tableName, resourceObj, req, res) {
+	database.insert('tienda', tableName, resourceObj, function(err, resource) {
+		res.writeHead(200, {'Content-type' : 'application/json'});
+		if(err) {
+			res.end(JSON.stringify(err));
+		}
+		res.end(JSON.stringify(resource));
+	})
+}
+
+var registerUser = function(registerJSONobj, req, res) {
+	insertResource('tienda_users', registerJSONobj, req, res);
+}
+
 var server = http.createServer(function(req, res) {
 	res.writeHead(200, {'Content-type' : 'application/json'});
 	
@@ -10,7 +24,7 @@ var server = http.createServer(function(req, res) {
 	var parsedUrl = URL.parse(req.url, true);
 	console.log(parsedUrl);
 	switch(parsedUrl.pathname) {
-		case '/tienda/register':
+		case '/tienda/register' || 'tienda/register/':
 			if(req.method == 'POST') {
 				console.log('processing register from POST');
 				var body = "";
@@ -30,7 +44,7 @@ var server = http.createServer(function(req, res) {
 						&& postJSON.user_email
 						&& postJSON.user_telecom
 						&& postJSON.user_password) {
-							
+						registerUser(postJSON, req, res);
 					} else {
 						res.end("Registration failed!");
 					}
