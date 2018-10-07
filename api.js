@@ -13,8 +13,19 @@ var insertResource = function(tableName, resourceObj, req, res) {
 	})
 }
 
+var findResource = function(tableName, resourceObj, req, res) {
+	database.find('tienda', tableName, resourceObj.user_email, function(err, resource) {
+		res.writeHead(200, {'Content-type':'application/json'});
+		res.end(JSON.stringify(resource));
+	})
+}
+
 var registerUser = function(registerJSONobj, req, res) {
 	insertResource('tienda_users', registerJSONobj, req, res);
+}
+
+var login = function(loginObj, req, res) {
+	
 }
 
 var getTimeStamp = function() {
@@ -73,6 +84,35 @@ var server = http.createServer(function(req, res) {
 						res.end("Registration failed!");
 					}
 				});
+			}
+		break;
+		case '/tienda/profile/update' || '/tienda/profile/update/':
+			if(req.method == 'POST') {
+				var body = "";
+				req.on('data', function(dataChunk) {
+					body += dataChunk;
+				});
+				
+				req.on('end', function() {
+					
+				})
+			} else {
+				
+			}
+		break;
+		case '/tienda/login' || '/tienda/login/':
+			if(req.method == 'POST') {
+				req.on('data', function(dataChunk) {
+					body += dataChunk;
+				});
+				req.on('end', function() {
+					var postJSON = JSON.parse(body);
+					
+					if(postJSON.user_email && postJSON.user_password) {
+						login(postJSON, req, res);
+						
+					}
+				})
 			}
 		break;
 		default:
