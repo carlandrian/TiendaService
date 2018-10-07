@@ -102,11 +102,12 @@ var server = http.createServer(function(req, res) {
 		break;
 		case '/tienda/login' || '/tienda/login/':
 			if(req.method == 'POST') {
+				var loginBody = "";
 				req.on('data', function(dataChunk) {
-					body += dataChunk;
+					loginBody += dataChunk;
 				});
 				req.on('end', function() {
-					var postJSON = JSON.parse(body);
+					var postJSON = JSON.parse(loginBody);
 					
 					if(postJSON.user_email && postJSON.user_password) {
 						login(postJSON, req, res);
