@@ -25,7 +25,7 @@ var registerUser = function(registerJSONobj, req, res) {
 }
 
 var login = function(loginObj, req, res) {
-	
+	findResource('tienda_users', loginObj, req, res);
 }
 
 var getTimeStamp = function() {
@@ -106,8 +106,10 @@ var server = http.createServer(function(req, res) {
 				req.on('data', function(dataChunk) {
 					loginBody += dataChunk;
 				});
+				console.log('loginBody: ' + loginBody);
 				req.on('end', function() {
 					var postJSON = JSON.parse(loginBody);
+					console.log('postJSON: ' + postJSON);
 					
 					if(postJSON.user_email && postJSON.user_password) {
 						login(postJSON, req, res);
