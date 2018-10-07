@@ -14,7 +14,8 @@ var insertResource = function(tableName, resourceObj, req, res) {
 }
 
 var findResource = function(tableName, resourceObj, req, res) {
-	database.find('tienda', tableName, resourceObj.user_email, function(err, resource) {
+	console.log('user_email: ' + resourceObj.user_email);
+	database.find('tienda', tableName, {'user_email' : resourceObj.user_email}, function(err, resource) {
 		res.writeHead(200, {'Content-type':'application/json'});
 		res.end(JSON.stringify(resource));
 	})
