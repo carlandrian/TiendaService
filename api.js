@@ -3,6 +3,10 @@ var fs = require('fs');
 var http = require('http');
 var URL = require('url');
 
+const express = require('express');
+const api = express();
+const port = 9090;
+
 var insertResource = function(tableName, resourceObj, req, res) {
 	database.insert('tienda', tableName, resourceObj, function(err, resource) {
 		res.writeHead(200, {'Content-type' : 'application/json'});
@@ -50,8 +54,18 @@ var getTimeStamp = function() {
     day = (day < 10 ? "0" : "") + day;
 
     return month + "/" + day + "/" + year + " " + hour + ":" + min + ":" + sec; // return in format mm/dd/yyyy HH:MM:SS
-}
+};
 
+var getDataFromReqBody = function(req, res) {
+	var body = "";
+	req.on('data', function(dataChunk) {
+		body += dataChunk;
+	});
+	
+	return body;
+};
+
+/**
 var server = http.createServer(function(req, res) {
 	res.writeHead(200, {'Content-type' : 'application/json'});
 	
@@ -126,3 +140,65 @@ var server = http.createServer(function(req, res) {
 
 server.listen(9090);
 console.log('Tienda API service is running on port 9090');
+*/
+
+api.get('/', function(req, res) {
+	res.send('Welcome to Tienda Service');
+});
+
+api.post('/tienda/profile/register', function(req, res) {
+	//console.log('processing register from POST');
+	//var body = getDataFromReqBody(req, res);
+	var body = "";
+	// get the passed data during POST during req 'on data' event
+	req.on('data', function(dataChunk) {
+		body += dataChunk;
+	});
+	//console.log('POST body: ' + body);
+	
+	req.on('end', function() {
+		// Once data is completed from POST body turn it into JSON to proceed with saving to DB
+		var postJSON = JSON.parse(body);
+		console.log(postJSON);
+					
+		// check if all mandatory fields are passed
+		if(postJSON.user_showname
+		&& postJSON.user_email
+		&& postJSON.user_telecom
+		&& postJSON.user_password) {
+			postJSON.user_register_date = getTimeStamp();
+			registerUser(postJSON, req, res);
+		} else {
+			res.end("Registration failed!");
+		}
+	});
+});
+
+api.post('/tienda/profile/login', function(req, res) {
+	var loginBody = "";
+	req.on('data', function(dataChunk) {
+		loginBody += dataChunk;
+	});
+	//console.log('loginBody: ' + loginBody);
+	req.on('end', function() {
+		var postJSON = JSON.parse(loginBody);
+		console.log('postJSON: ' + postJSON);
+					
+		if(postJSON.user_email && postJSON.user_password) {
+			login(postJSON, req, res);
+						
+		}
+	});
+});
+
+api.post('/tienda/profile/update', function(req, res) {
+	
+});
+
+api.get('/ping', function(req, res) {
+	res.send("Tienda service ping success!");
+});
+
+api.listen(port, function() {
+	console.log('Tienda Service listening to port ' + port);
+});
