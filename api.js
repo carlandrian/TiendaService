@@ -26,9 +26,9 @@ var findResource = function(tableName, resourceObj, req, res) {
 	})
 }
 
-var updateResource = function(tableName, resourceObj, req, res) {
+var updateResource = function(tableName, id, resourceObj, req, res) {
 	console.log("Updating db document object");
-	database.updateOne(TiendaDB, tableName, resourceObj, function(err, result) {
+	database.updateOne(TiendaDB, tableName, id, resourceObj, function(err, result) {
 		res.writeHead(200, {'Content-type' : 'application/json'});
 		res.end(JSON.stringify(result));
 	})
@@ -43,7 +43,30 @@ var login = function(loginObj, req, res) {
 }
 
 var updateProfile = function(profileJsonObj, req, res) {
-	updateResource('tienda_users', profileJsonObj, req, res);
+	var updateObj = '{}';	// create a new JSON obj
+
+	if (profileJsonObj.user_showname) {
+	  console.log('updating user_showname: ' + profileJsonObj.user_showname);
+	  updateObj.user_showname = profileJsonObj.user_showname;
+	}
+
+	if(profileJsonObj.user_email) {
+		console.log('updating user_email: ' + profileJsonObj.user_email);
+		updateObj.user_email = profileJsonObj.user_email;
+	}
+
+	if(profileJsonObj.user_telecom) {
+		console.log('updating user_telecom: ' + profileJsonObj.user_telecom);
+		updateObj.user_telecom = profileJsonObj.user_telecom;
+	}
+
+	if(profileJsonObj.user_password) {
+		console.log('updating user_password: ' + profileJsonObj.user_password);
+		updateObj.user_password = profileJsonObj.user_password;
+	}
+	//{"user_showname":document.user_showname, "user_email" : document.user_email, "user_telecom" : document.user_telecom, "user_password" : document.user_password}
+	console.log('updateObj : ' + updateObj)
+	updateResource('tienda_users', profileJsonObj._id, updateObj, req, res);
 }
 
 var getTimeStamp = function() {
