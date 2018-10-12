@@ -213,7 +213,7 @@ api.post('/tienda/profile/update', function(req, res) {
 		});
 
 		req.on('end', function() {
-			var profileBodyJson = JSON.parse(updateProfile);
+			var profileBodyJson = JSON.parse(updateProfileBody);
 			console.log(profileBodyJson);
 			updateProfile(profileBodyJson);
 		})
