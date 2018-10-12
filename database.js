@@ -116,9 +116,9 @@ exports.updateOne = function(databaseName, collectionName, document, callback) {
       updateObj.user_showname = document.user_showname;
     }
 
-    if(document.) {
+    //if(document.) {
 
-    }
+    //}
     //{"user_showname":document.user_showname, "user_email" : document.user_email, "user_telecom" : document.user_telecom, "user_password" : document.user_password}
 
     collection.updateOne({"_id": document._id}, {$set: updateObj
