@@ -110,8 +110,19 @@ exports.updateOne = function(databaseName, collectionName, document, callback) {
   connect(databaseName, function(client) {
     const db = client.db(databaseName);
     const collection = db.collection(collectionName);
-    collection.updateOne({"_id": document._id}, {$set:
-      {"user_showname":document.user_showname, "user_email" : document.user_email, "user_telecom" : document.user_telecom, "user_password" : document.user_password}},
+    var updateObj;
+
+    if (document.user_showname) {
+      updateObj.user_showname = document.user_showname;
+    }
+
+    if(document.) {
+
+    }
+    //{"user_showname":document.user_showname, "user_email" : document.user_email, "user_telecom" : document.user_telecom, "user_password" : document.user_password}
+
+    collection.updateOne({"_id": document._id}, {$set: updateObj
+      },
       function(err, result){
         console.log("document updated with _id : " + document._id);
         callback(err, result);
