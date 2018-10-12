@@ -36,8 +36,8 @@ exports.find = function(databaseName, collectionName, query, callback) {
   connect(databaseName, function(client) {
     // The collection we want to find documents from
     //console.log('retrieving on ' + collectionName);
-    var db = client.db(databaseName);
-    var collection = db.collection(collectionName);
+    const db = client.db(databaseName);
+    const collection = db.collection(collectionName);
 
     // Search the given collection in the given database for
     // all documents which match the criteria, convert them to
@@ -66,8 +66,8 @@ exports.findOneById = function(databaseName, collectionName, id, callback) {
   connect(databaseName, function(client) {
     // The collection we want to find documents from
     //console.log('retrieving on ' + collectionName);
-    var db = client.db(databaseName);
-    var collection = db.collection(collectionName);
+    const db = client.db(databaseName);
+    const collection = db.collection(collectionName);
 
     // Search the given collection in the given database for
     // all documents which match the criteria, convert them to
@@ -94,8 +94,8 @@ exports.findOneById = function(databaseName, collectionName, id, callback) {
 
 exports.insert = function(databaseName, collectionName, document, callback) {
   connect(databaseName, function(client) {
-    var db = client.db(databaseName);
-    var collection = db.collection(collectionName);
+    const db = client.db(databaseName);
+    const collection = db.collection(collectionName);
     //var collection = database.collection(collectionName);
     collection.insert(document, {w : 1}, function (err, documents) {
       console.log("Added new documents");
@@ -105,3 +105,15 @@ exports.insert = function(databaseName, collectionName, document, callback) {
     });
   });
 };
+
+exports.updateOne = function(databaseName, collectionName, document, callback) {
+  connect(databaseName, function(client) {
+    const db = client.db(databaseName);
+    const collection = db.collection(collectionName);
+      collection.updateOne({"_id": document._id}, {$set}:
+        {"user_showname":document.user_showname, "user_email" : document.user_email, "user_telecom" : document.user_telecom, "user_password" : document.user_password}}, function(err, result){
+          console.log("document updated with _id : " + document._id);
+          callback(err, result);
+        })
+  })
+}
