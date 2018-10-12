@@ -214,8 +214,9 @@ api.post('/tienda/profile/update', function(req, res) {
 
 		req.on('end', function() {
 			var profileBodyJson = JSON.parse(updateProfileBody);
+			console.log("_id: " + profileBodyJson._id);
 			console.log(profileBodyJson);
-			updateProfile(profileBodyJson);
+			updateProfile(profileBodyJson, req, res);
 		})
 });
 
