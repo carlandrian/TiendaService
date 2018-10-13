@@ -211,6 +211,7 @@ api.post('/tienda/profile/register', function(req, res) {
 });
 
 api.post('/tienda/profile/login', function(req, res) {
+	console.log(req);
 	var loginBody = "";
 	req.on('data', function(dataChunk) {
 		loginBody += dataChunk;
