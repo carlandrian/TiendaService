@@ -215,7 +215,7 @@ api.post('/tienda/profile/login', function(req, res) {
 	req.on('data', function(dataChunk) {
 		loginBody += dataChunk;
 	});
-	//console.log('loginBody: ' + loginBody);
+	console.log('loginBody: ' + loginBody);
 	req.on('end', function() {
 		var postJSON = JSON.parse(loginBody);
 		console.log('postJSON: ' + postJSON);
