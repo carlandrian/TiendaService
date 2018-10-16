@@ -7,6 +7,11 @@ const express = require('express');
 const api = express();
 const port = 9090;
 const TiendaDB = 'tienda';
+const bodyParser = require('body-parser');
+
+api.use(bodyParser.json());
+api.use(bodyParser.urlencoded({extended : true}));
+
 
 var insertResource = function(tableName, resourceObj, req, res) {
 	database.insert(TiendaDB, tableName, resourceObj, function(err, resource) {
@@ -19,10 +24,13 @@ var insertResource = function(tableName, resourceObj, req, res) {
 }
 
 var findResource = function(tableName, resourceObj, req, res) {
-	console.log('user_email: ' + resourceObj.user_email);
-	database.find(TiendaDB, tableName, {'user_email' : resourceObj.user_email}, function(err, resource) {
-		res.writeHead(200, {'Content-type':'application/json'});
-		res.end(JSON.stringify(resource));
+	//console.log('user_email: ' + resourceObj.user_email);
+	database.find(TiendaDB, tableName, {'user_email' : resourceObj.user_email, 'user_password' : resourceObj.user_password}, function(err, resource) {
+		//res.writeHead(200, {'Content-type':'application/json'});
+		//res.end(JSON.stringify(resource));
+		var resourceStr = JSON.stringify(resource);
+		console.log("resourceStr: " + resourceStr);
+		return resourceStr;
 	})
 }
 
@@ -39,7 +47,7 @@ var registerUser = function(registerJSONobj, req, res) {
 }
 
 var login = function(loginObj, req, res) {
-	findResource('tienda_users', loginObj, req, res);
+	return findResource('tienda_users', loginObj, req, res);
 }
 
 var updateProfile = function(profileJsonObj, req, res) {
@@ -100,6 +108,95 @@ var getDataFromReqBody = function(req, res) {
 
 	return body;
 };
+
+api.get('/', function(req, res) {
+	res.send('Welcome to Tienda Service');
+});
+
+api.post('/tienda/profile/register', function(req, res) {
+	//console.log('processing register from POST');
+	//var body = getDataFromReqBody(req, res);
+	var body = "";
+	// get the passed data during POST during req 'on data' event
+	req.on('data', function(dataChunk) {
+		body += dataChunk;
+	});
+	//console.log('POST body: ' + body);
+
+	req.on('end', function() {
+		// Once data is completed from POST body turn it into JSON to proceed with saving to DB
+		var postJSON = JSON.parse(body);
+		console.log(postJSON);
+
+		// check if all mandatory fields are passed
+		if(postJSON.user_showname
+		&& postJSON.user_email
+		&& postJSON.user_telecom
+		&& postJSON.user_password) {
+			postJSON.user_register_date = getTimeStamp();
+			registerUser(postJSON, req, res);
+		} else {
+			res.end("Registration failed!");
+		}
+	});
+});
+
+api.post('/tienda/profile/login', function(req, res) {
+	//console.log("req.body.user_email: " + req.body.user_email);
+	//console.log("req.body.user_password: " + req.body.user_password);
+	//console.log(req.headers);
+	var loginBody = {};
+	loginBody.user_email = req.body.user_email;
+	loginBody.user_password = req.body.user_password;
+
+	//console.log("loginBody: " + loginBody);
+	//req.on('data', function(dataChunk) {
+	//	loginBody += dataChunk;
+	//});
+	//console.log('loginBody: ' + loginBody);
+	//req.on('end', function() {
+	//	var postJSON = JSON.parse(loginBody);
+	//	console.log('postJSON: ' + postJSON);
+
+		if(req.body.user_email && req.body.user_password) {
+	//		login(postJSON, req, res);
+				var responseJson = login(loginBody, req, res);
+				console.log("responseJson: " + responseJson);
+				//if(responseJson._id) {
+				//	res.writeHead(200, {'Content-type':'application/json'});
+					//res.end(JSON.stringify(resource));
+					res.redirect('/index.html');
+				//}
+		}
+	//});
+});
+
+
+
+api.post('/tienda/profile/update', function(req, res) {
+		var updateProfileBody = "";
+		req.on('data', function(dataChunk) {
+			updateProfileBody += dataChunk;
+		});
+
+		req.on('end', function() {
+			var profileBodyJson = JSON.parse(updateProfileBody);
+			console.log("_id: " + profileBodyJson._id);
+			console.log(profileBodyJson);
+			if(profileBodyJson._id) {
+				updateProfile(profileBodyJson, req, res);
+			}
+
+		})
+});
+
+api.get('/ping', function(req, res) {
+	res.send("Tienda service ping success!");
+});
+
+api.listen(port, function() {
+	console.log('Tienda Service listening to port ' + port);
+});
 
 /**
 var server = http.createServer(function(req, res) {
@@ -177,80 +274,3 @@ var server = http.createServer(function(req, res) {
 server.listen(9090);
 console.log('Tienda API service is running on port 9090');
 */
-
-api.get('/', function(req, res) {
-	res.send('Welcome to Tienda Service');
-});
-
-api.post('/tienda/profile/register', function(req, res) {
-	//console.log('processing register from POST');
-	//var body = getDataFromReqBody(req, res);
-	var body = "";
-	// get the passed data during POST during req 'on data' event
-	req.on('data', function(dataChunk) {
-		body += dataChunk;
-	});
-	//console.log('POST body: ' + body);
-
-	req.on('end', function() {
-		// Once data is completed from POST body turn it into JSON to proceed with saving to DB
-		var postJSON = JSON.parse(body);
-		console.log(postJSON);
-
-		// check if all mandatory fields are passed
-		if(postJSON.user_showname
-		&& postJSON.user_email
-		&& postJSON.user_telecom
-		&& postJSON.user_password) {
-			postJSON.user_register_date = getTimeStamp();
-			registerUser(postJSON, req, res);
-		} else {
-			res.end("Registration failed!");
-		}
-	});
-});
-
-api.post('/tienda/profile/login', function(req, res) {
-	console.log(req);
-	var loginBody = "";
-	req.on('data', function(dataChunk) {
-		loginBody += dataChunk;
-	});
-	console.log('loginBody: ' + loginBody);
-	req.on('end', function() {
-		var postJSON = JSON.parse(loginBody);
-		console.log('postJSON: ' + postJSON);
-
-		if(postJSON.user_email && postJSON.user_password) {
-			login(postJSON, req, res);
-
-		}
-	});
-});
-
-
-
-api.post('/tienda/profile/update', function(req, res) {
-		var updateProfileBody = "";
-		req.on('data', function(dataChunk) {
-			updateProfileBody += dataChunk;
-		});
-
-		req.on('end', function() {
-			var profileBodyJson = JSON.parse(updateProfileBody);
-			console.log("_id: " + profileBodyJson._id);
-			console.log(profileBodyJson);
-			if(profileBodyJson._id) {
-				updateProfile(profileBodyJson, req, res);
-			}
-
-		})
-});
-
-api.get('/ping', function(req, res) {
-	res.send("Tienda service ping success!");
-});
-
-api.listen(port, function() {
-	console.log('Tienda Service listening to port ' + port);
-});
