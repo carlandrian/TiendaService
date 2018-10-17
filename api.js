@@ -23,15 +23,9 @@ var insertResource = function(tableName, resourceObj, req, res) {
 	})
 }
 
-var findResource = function(tableName, resourceObj, req, res) {
+var findResource = function(tableName, resourceObj, callback) {
 	//console.log('user_email: ' + resourceObj.user_email);
-	database.find(TiendaDB, tableName, {'user_email' : resourceObj.user_email, 'user_password' : resourceObj.user_password}, function(err, resource) {
-		//res.writeHead(200, {'Content-type':'application/json'});
-		//res.end(JSON.stringify(resource));
-		var resourceStr = JSON.stringify(resource);
-		console.log("resourceStr: " + resourceStr);
-		return resourceStr;
-	})
+	database.find(TiendaDB, tableName, {'user_email' : resourceObj.user_email, 'user_password' : resourceObj.user_password}, callback);
 }
 
 var updateResource = function(tableName, id, resourceObj, req, res) {
@@ -47,7 +41,14 @@ var registerUser = function(registerJSONobj, req, res) {
 }
 
 var login = function(loginObj, req, res) {
-	return findResource('tienda_users', loginObj, req, res);
+	return findResource('tienda_users', loginObj, function(err, loginObj) {
+		res.writeHead(200, {'Content-type':'application/json'});
+		//res.end(JSON.stringify(resource));
+		var resourceStr = JSON.stringify(resource);
+		console.log("resourceStr: " + resourceStr);
+		//return resourceStr;
+		res.redirect('/index.html');
+	});
 }
 
 var updateProfile = function(profileJsonObj, req, res) {
@@ -142,33 +143,16 @@ api.post('/tienda/profile/register', function(req, res) {
 });
 
 api.post('/tienda/profile/login', function(req, res) {
-	//console.log("req.body.user_email: " + req.body.user_email);
-	//console.log("req.body.user_password: " + req.body.user_password);
-	//console.log(req.headers);
 	var loginBody = {};
 	loginBody.user_email = req.body.user_email;
 	loginBody.user_password = req.body.user_password;
 
-	//console.log("loginBody: " + loginBody);
-	//req.on('data', function(dataChunk) {
-	//	loginBody += dataChunk;
-	//});
-	//console.log('loginBody: ' + loginBody);
-	//req.on('end', function() {
-	//	var postJSON = JSON.parse(loginBody);
-	//	console.log('postJSON: ' + postJSON);
 
-		if(req.body.user_email && req.body.user_password) {
-	//		login(postJSON, req, res);
-				var responseJson = login(loginBody, req, res);
-				console.log("responseJson: " + responseJson);
-				//if(responseJson._id) {
-				//	res.writeHead(200, {'Content-type':'application/json'});
-					//res.end(JSON.stringify(resource));
-					res.redirect('/index.html');
-				//}
-		}
-	//});
+	if(req.body.user_email && req.body.user_password) {
+		var responseJson = login(loginBody, req, res);
+		console.log("responseJson: " + responseJson);
+		
+	}
 });
 
 
@@ -197,6 +181,23 @@ api.get('/ping', function(req, res) {
 api.listen(port, function() {
 	console.log('Tienda Service listening to port ' + port);
 });
+
+
+api.post('tienda/item/sell', function(req, res) {
+	var sellItem = {};
+	sellItem.item_type = req.body.item_type;
+	sellItem.item_category_type = req.body.item_category_type;
+	sellItem.item_condition_type = req.body.item_condition_type;
+	sell_item.item_title = req.body.item_title;
+	sell_item.item_price = req.body.item_price;
+	sell_item.item_description = req.body.item_description;
+	sell_item.item_posted_date = req.body.item_posted_date;
+	sell_item.item_eff_start_date = req.body.item_eff_start_date; // this can be the current date of sell item posting or the date of re-activation of an expired sell item.
+	sell_item.item_eff_end_date = req.body.item_eff_end_date;	// a function can be created to generate the item_eff_end_end to calculate the number of days a sell item is to expire.
+	sell_item.item_posted_by = req.body.item_posted_by;	// get the value of this from the current user of the app;
+	
+	
+})
 
 /**
 var server = http.createServer(function(req, res) {
