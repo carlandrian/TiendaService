@@ -142,7 +142,7 @@ api.post('/tienda/profile/register', function(req, res) {
 		&& postJSON.user_email
 		&& postJSON.user_phoneNumber
 		&& postJSON.user_password) {
-			postJSON.user_register_date = getTimeStamp();
+			registerBody.user_register_date = getTimeStamp();
 			registerUser(registerBody, req, res);
 		} else {
 			res.end("Registration failed!");
