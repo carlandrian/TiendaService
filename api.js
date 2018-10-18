@@ -13,14 +13,8 @@ api.use(bodyParser.json());
 api.use(bodyParser.urlencoded({extended : true}));
 
 
-var insertResource = function(tableName, resourceObj, req, res) {
-	database.insert(TiendaDB, tableName, resourceObj, function(err, resource) {
-		res.writeHead(200, {'Content-type' : 'application/json'});
-		if(err) {
-			res.end(JSON.stringify(err));
-		}
-		res.end(JSON.stringify(resource));
-	})
+var insertResource = function(tableName, resourceObj, callback) {
+	database.insert(TiendaDB, tableName, resourceObj, callback);
 }
 
 var findResource = function(tableName, resourceObj, callback) {
@@ -37,7 +31,11 @@ var updateResource = function(tableName, id, resourceObj, req, res) {
 }
 
 var registerUser = function(registerJSONobj, req, res) {
-	insertResource('tienda_users', registerJSONobj, req, res);
+	insertResource('tienda_users', registerJSONobj, function(err, registerObj) {
+		var registerInsertStr = JSON.stringify(registerObj);
+		res.writeHead(200, {'Content-type':'application/json'});
+		res.end(registerInsertStr);
+	});
 }
 
 var login = function(loginObj, req, res) {
@@ -138,10 +136,10 @@ api.post('/tienda/profile/register', function(req, res) {
 		//console.log(postJSON);
 
 		// check if all mandatory fields are passed
-		if(postJSON.user_showName
-		&& postJSON.user_email
-		&& postJSON.user_phoneNumber
-		&& postJSON.user_password) {
+		if(registerBody.user_showName
+		&& registerBody.user_email
+		&& registerBody.user_phoneNumber
+		&& registerBody.user_password) {
 			registerBody.user_register_date = getTimeStamp();
 			registerUser(registerBody, req, res);
 		} else {
