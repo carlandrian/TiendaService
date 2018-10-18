@@ -130,6 +130,7 @@ api.post('/tienda/profile/register', function(req, res) {
 	registerBody.user_showName = req.body.user_showName;
 	registerBody.user_phoneNumber = req.body.user_phoneNumber;
 	registerBody.user_password = req.body.user_password;
+	console.log('registerBody: ' + registerBody);
 
 	//req.on('end', function() {
 		// Once data is completed from POST body turn it into JSON to proceed with saving to DB
