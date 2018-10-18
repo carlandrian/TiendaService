@@ -42,12 +42,14 @@ var registerUser = function(registerJSONobj, req, res) {
 
 var login = function(loginObj, req, res) {
 	return findResource('tienda_users', loginObj, function(err, loginObj) {
-		res.writeHead(200, {'Content-type':'application/json'});
-		//res.end(JSON.stringify(resource));
-		var resourceStr = JSON.stringify(resource);
+		
+		
+		var resourceStr = JSON.stringify(loginObj);
 		console.log("resourceStr: " + resourceStr);
 		//return resourceStr;
-		res.redirect('/index.html');
+		//res.redirect('/index');
+		res.writeHead(200, {'Content-type':'application/json'});
+		res.end(JSON.stringify(loginObj));
 	});
 }
 
@@ -117,29 +119,34 @@ api.get('/', function(req, res) {
 api.post('/tienda/profile/register', function(req, res) {
 	//console.log('processing register from POST');
 	//var body = getDataFromReqBody(req, res);
-	var body = "";
+	//var body = "";
 	// get the passed data during POST during req 'on data' event
-	req.on('data', function(dataChunk) {
-		body += dataChunk;
-	});
-	//console.log('POST body: ' + body);
+	//req.on('data', function(dataChunk) {
+	//	body += dataChunk;
+	//});
+	console.log('register api called');
+	var registerBody = {};
+	registerBody.user_email = req.body.user_email;
+	registerBody.user_showName = req.body.user_showName;
+	registerBody.user_phoneNumber = req.body.user_phoneNumber;
+	registerBody.user_password = req.body.user_password;
 
-	req.on('end', function() {
+	//req.on('end', function() {
 		// Once data is completed from POST body turn it into JSON to proceed with saving to DB
-		var postJSON = JSON.parse(body);
+		var postJSON = JSON.parse(registerBody);
 		console.log(postJSON);
 
 		// check if all mandatory fields are passed
-		if(postJSON.user_showname
+		if(postJSON.user_showName
 		&& postJSON.user_email
-		&& postJSON.user_telecom
+		&& postJSON.user_phoneNumber
 		&& postJSON.user_password) {
 			postJSON.user_register_date = getTimeStamp();
 			registerUser(postJSON, req, res);
 		} else {
 			res.end("Registration failed!");
 		}
-	});
+	//});
 });
 
 api.post('/tienda/profile/login', function(req, res) {
@@ -149,8 +156,8 @@ api.post('/tienda/profile/login', function(req, res) {
 
 
 	if(req.body.user_email && req.body.user_password) {
-		var responseJson = login(loginBody, req, res);
-		console.log("responseJson: " + responseJson);
+		login(loginBody, req, res);
+		//console.log("responseJson: " + responseJson);
 		
 	}
 });
@@ -174,7 +181,7 @@ api.post('/tienda/profile/update', function(req, res) {
 		})
 });
 
-api.get('/ping', function(req, res) {
+api.get('/tienda/ping', function(req, res) {
 	res.send("Tienda service ping success!");
 });
 
