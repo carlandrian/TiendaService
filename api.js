@@ -130,12 +130,12 @@ api.post('/tienda/profile/register', function(req, res) {
 	registerBody.user_showName = req.body.user_showName;
 	registerBody.user_phoneNumber = req.body.user_phoneNumber;
 	registerBody.user_password = req.body.user_password;
-	console.log('registerBody: ' + registerBody);
+	console.log('registerBody: ' + JSON.stringify(registerBody));
 
 	//req.on('end', function() {
 		// Once data is completed from POST body turn it into JSON to proceed with saving to DB
-		var postJSON = JSON.parse(registerBody);
-		console.log(postJSON);
+		//var postJSON = JSON.parse(registerBody);
+		//console.log(postJSON);
 
 		// check if all mandatory fields are passed
 		if(postJSON.user_showName
@@ -143,7 +143,7 @@ api.post('/tienda/profile/register', function(req, res) {
 		&& postJSON.user_phoneNumber
 		&& postJSON.user_password) {
 			postJSON.user_register_date = getTimeStamp();
-			registerUser(postJSON, req, res);
+			registerUser(registerBody, req, res);
 		} else {
 			res.end("Registration failed!");
 		}
